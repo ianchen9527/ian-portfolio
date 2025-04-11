@@ -9,11 +9,11 @@ export default function Header() {
       <nav className="max-w-3xl mx-auto px-4 flex justify-between items-center">
         <Link
           href="/"
-          className="text-7xl font-bold tracking-tight hover:opacity-80 transition"
+          className="text-3xl font-bold tracking-tight hover:opacity-80 transition"
         >
           Ian Chen
         </Link>
-        <ul className="flex gap-6 text-6xl font-medium">
+        <ul className="flex gap-6 text-xl font-medium">
           <li>
             <Link href="/about" className="hover:underline">
               About
