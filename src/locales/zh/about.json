@@ -1,0 +1,87 @@
+{
+  "contact": {
+    "title": "聯絡資訊",
+    "name": "姓名：陳奕安（Ian Chen）",
+    "phone": "電話：0966117181",
+    "linkedin": "https://www.linkedin.com/in/ian-chen-b8b458140",
+    "github": "https://github.com/ianchen9527"
+  },
+  "skills": {
+    "title": "技能",
+    "items": [
+      "TypeScript",
+      "React / Next.js",
+      "Vue / Nuxt",
+      "Node.js",
+      "Firebase / Firestore",
+      "Tailwind CSS",
+      "Jest / Vitest",
+      "Git / GitHub",
+      "Figma"
+    ]
+  },
+  "education": {
+    "title": "學歷",
+    "items": [
+      {
+        "school": "國立臺灣大學",
+        "desc": "資訊工程學系（2006–2011）"
+      },
+      {
+        "school": "台北市立建國中學",
+        "desc": "（2003–2006）"
+      },
+      {
+        "school": "台北私立薇閣國中 & 國小",
+        "desc": "（1994–2003）"
+      }
+    ]
+  },
+  "experience": {
+    "title": "工作經歷",
+    "jobs": [
+      {
+        "title": "AmazingTalker｜資深前端工程師 → 技術管理職",
+        "period": "2020 – 至今",
+        "domain": "amazingtalker.com",
+        "url": "https://www.amazingtalker.com",
+        "points": [
+          "主要使用 Vue 與 Nuxt 開發核心系統與前台功能",
+          "設計並實作 dataManager 工具 -- 統一封裝 REST、GraphQL、localStorage、Cookie 資料流",
+          "主導樣式系統重構，引入 Tailwind CSS，拔除 Element UI",
+          "建立測試規範與工程準則，提升穩定性與可維護性",
+          "解決技術瓶頸與緊急問題，確保平台穩定",
+          "2022 起擔任技術主管，管理 4–6 人團隊，涵蓋前端或全端",
+          "引入 Mentor 制度，幫助 Junior 快速成長，培養 Senior 領導力",
+          "與主管、創辦人協作推動跨部門需求落地",
+          "團隊擁有公司內最低離職率，展現高度穩定與信任"
+        ]
+      },
+      {
+        "title": "Taroko Software｜資深前端工程師（主要開發者）",
+        "period": "2018 – 2020",
+        "domain": "taroko.io",
+        "url": "https://www.taroko.io",
+        "points": [
+          "主導 Termly 前端開發，撰寫超過 70% 程式碼並擔任 PR reviewer",
+          "優化 Webpack 設定，將 hot reload / build 時間從 20 分鐘降至 1 分鐘內",
+          "建立測試與 CI 流程，強化品質與開發信心",
+          "跨部門協作，實作高可維護性的元件架構與響應式 UI"
+        ]
+      },
+      {
+        "title": "Kono｜前端 / 全端工程師",
+        "period": "2011 – 2018",
+        "domain": "thekono.com",
+        "url": "https://www.thekono.com",
+        "points": [
+          "從無到有打造 Kono 雜誌閱讀平台",
+          "歷經三次全站重構，技術橫跨 jQuery、Backbone、Ember、AngularJS 到 React",
+          "後端採用 PHP (Yii) 與 Ruby on Rails，具備全端背景",
+          "與 PM / 設計密切合作，培養產品思維與對細節的高度敏感度",
+          "撰寫模組化、可測試與可擴充的程式碼，強調長期維護性"
+        ]
+      }
+    ]
+  }
+}

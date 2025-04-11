@@ -1,0 +1,87 @@
+{
+  "contact": {
+    "title": "Contact",
+    "name": "Name: Ian Chen",
+    "phone": "Phone: +886 966 117 181",
+    "linkedin": "https://www.linkedin.com/in/ian-chen-b8b458140",
+    "github": "https://github.com/ianchen9527"
+  },
+  "skills": {
+    "title": "Skills",
+    "items": [
+      "TypeScript",
+      "React / Next.js",
+      "Vue / Nuxt",
+      "Node.js",
+      "Firebase / Firestore",
+      "Tailwind CSS",
+      "Jest / Vitest",
+      "Git / GitHub",
+      "Figma"
+    ]
+  },
+  "education": {
+    "title": "Education",
+    "items": [
+      {
+        "school": "National Taiwan University",
+        "desc": "CSIE (2006–2011)"
+      },
+      {
+        "school": "Taipei Municipal Jianguo High School",
+        "desc": "(2003–2006)"
+      },
+      {
+        "school": "Wego Private School (Elementary & Junior High)",
+        "desc": "(1994–2003)"
+      }
+    ]
+  },
+  "experience": {
+    "title": "Work Experience",
+    "jobs": [
+      {
+        "title": "AmazingTalker | Senior Frontend Engineer → Engineering Manager",
+        "period": "2020 – Present",
+        "domain": "amazingtalker.com",
+        "url": "https://www.amazingtalker.com",
+        "points": [
+          "Developed core systems using Vue & Nuxt",
+          "Created dataManager to unify API, GraphQL, localStorage, and Cookie access",
+          "Migrated styling from Element UI to Tailwind CSS",
+          "Established testing and engineering guidelines",
+          "Resolved technical bottlenecks and ensured platform stability",
+          "Managed 4–6 engineers; frontend or fullstack",
+          "Introduced mentorship system to support team growth",
+          "Collaborated with executives to execute cross-functional projects",
+          "Team maintained lowest turnover rate in the company"
+        ]
+      },
+      {
+        "title": "Taroko Software | Senior Frontend Engineer (Lead Developer)",
+        "period": "2018 – 2020",
+        "domain": "taroko.io",
+        "url": "https://www.taroko.io",
+        "points": [
+          "Led frontend development for Termly, owning 70%+ of the codebase",
+          "Optimized Webpack build time from 20 mins to <1 min",
+          "Established testing & CI pipelines",
+          "Built maintainable and responsive UI through close team collaboration"
+        ]
+      },
+      {
+        "title": "Kono | Frontend / Fullstack Engineer",
+        "period": "2011 – 2018",
+        "domain": "thekono.com",
+        "url": "https://www.thekono.com",
+        "points": [
+          "Built digital magazine platform from scratch",
+          "Led three full frontend rewrites: jQuery → Backbone → Ember → AngularJS → React",
+          "Worked on PHP (Yii) and Ruby on Rails backend",
+          "Collaborated closely with PMs and designers",
+          "Wrote modular, testable, and scalable code"
+        ]
+      }
+    ]
+  }
+}
