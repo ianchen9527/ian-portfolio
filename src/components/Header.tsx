@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation"
 export default function Header() {
   const pathname = usePathname()
   const params = pathname.split("/").filter(Boolean)
-  const locale = params[0] || "zh"
+  const locale = params[0] || "en"
   const homeLink = `/${locale}`
   const aboutLink = `/${locale}/about`
 
