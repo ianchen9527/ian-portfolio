@@ -4,7 +4,7 @@ This is my personal bilingual portfolio website built with Next.js App Router, f
 
 ## 🌐 Live Demo
 
-🔗 [https://ian-portfolio-lovat.vercel.app/](https://ian-portfolio-lovat.vercel.app/)
+🔗 [https://ianchen-portfolio.vercel.app](https://ianchen-portfolio.vercel.app)
 
 ## ✨ Features
 
