@@ -1,0 +1,22 @@
+{
+  "title": "陳奕安 Ian Chen",
+  "subtitle": "資深前端工程師，專注於 React / TypeScript / Tailwind 領域",
+  "projectsTitle": "作品集",
+  "projects": [
+    {
+      "title": "Sana Agents 切版 Demo",
+      "desc": "復刻現有網站，展現切版能力",
+      "link": "/zh/projects/sana-demo"
+    },
+    {
+      "title": "Figma to HTML",
+      "desc": "將設計稿轉換為可用網頁（開發中）",
+      "link": ""
+    },
+    {
+      "title": "股票記帳工具",
+      "desc": "自動計算每日損益，串接即時股價 API（開發中）",
+      "link": ""
+    }
+  ]
+}

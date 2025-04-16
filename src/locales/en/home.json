@@ -1,0 +1,22 @@
+{
+  "title": "Ian Chen",
+  "subtitle": "Senior Frontend Engineer specializing in React, TypeScript, and Tailwind CSS.",
+  "projectsTitle": "Projects",
+  "projects": [
+    {
+      "title": "Sana Agents Rebuild Demo",
+      "desc": "Rebuilt an existing landing page to showcase pixel-perfect frontend skills.",
+      "link": "/en/projects/sana-demo"
+    },
+    {
+      "title": "Figma to HTML",
+      "desc": "Transforming a design file into responsive code (in progress).",
+      "link": ""
+    },
+    {
+      "title": "Stock Profit Tracker",
+      "desc": "Auto-calculates daily profit/loss by integrating real-time stock prices (in progress).",
+      "link": ""
+    }
+  ]
+}
