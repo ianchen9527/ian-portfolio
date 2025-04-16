@@ -1,4 +1,3 @@
-import LocaleSwitcher from "@/components/LocaleSwitcher"
 import zh from "@/locales/zh/about.json"
 import en from "@/locales/en/about.json"
 
@@ -12,7 +11,6 @@ export default async function AboutPage({
 
   return (
     <>
-      <LocaleSwitcher />
       <section className="space-y-12">
         <section>
           <h2 className="text-2xl font-bold mb-4">{t.contact.title}</h2>

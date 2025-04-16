@@ -2,6 +2,7 @@
 "use client"
 
 import Link from "next/link"
+import LocaleSwitcher from "@/components/LocaleSwitcher"
 import { usePathname } from "next/navigation"
 
 export default function Header() {
@@ -29,6 +30,7 @@ export default function Header() {
           {/* more page here */}
         </ul>
       </nav>
+      <LocaleSwitcher />
     </header>
   )
 }
