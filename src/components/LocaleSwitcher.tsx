@@ -15,10 +15,7 @@ export default function LocaleSwitcher() {
   }
 
   return (
-    <button
-      onClick={switchLocale}
-      className="text-sm underline absolute top-4 right-4 cursor-pointer"
-    >
+    <button onClick={switchLocale} className="text-sm underline cursor-pointer">
       {nextLocale === "zh" ? "中文" : "English"}
     </button>
   )

@@ -29,8 +29,8 @@ export default function Header() {
           </li>
           {/* more page here */}
         </ul>
+        <LocaleSwitcher />
       </nav>
-      <LocaleSwitcher />
     </header>
   )
 }
