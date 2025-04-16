@@ -1,13 +1,11 @@
-import zh from "@/locales/zh/about.json"
-import en from "@/locales/en/about.json"
+import { getTranslations } from "@/lib/getTranslations"
 
 export default async function AboutPage({
   params,
 }: {
   params: Promise<{ locale: string }>
 }) {
-  const { locale } = await params
-  const t = locale === "zh" ? zh : en
+  const t = await getTranslations(params, "about")
 
   return (
     <>
