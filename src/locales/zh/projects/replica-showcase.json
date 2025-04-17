@@ -1,0 +1,24 @@
+{
+  "title": "復刻網站",
+  "subtitle": "復刻現有網站，展現切版能力",
+  "demos": [
+    {
+      "title": "Paul Archer Design",
+      "desc": "復刻 Paul Archer Design 首頁，展現 Tailwind 切版能力。",
+      "coverImage": "/projects/replica-showcase/paul-archer-design-cover.png",
+      "link": "/zh/projects/replica-showcase/demo/paul-archer-design"
+    },
+    {
+      "title": "Preply Teachers",
+      "desc": "重現 Preply 教師頁面設計，強調 RWD 和 UI 邏輯。",
+      "coverImage": "/projects/replica-showcase/preply-cover.png",
+      "link": "/zh/projects/replica-showcase/demo/preply"
+    },
+    {
+      "title": "Glints Job Portal",
+      "desc": "仿製 Glints 求職平台的核心互動體驗。",
+      "coverImage": "/projects/replica-showcase/glints-cover.png",
+      "link": "/zh/projects/replica-showcase/demo/glints"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "title": "Website Replication",
+  "subtitle": "Recreating existing websites to showcase frontend development skills.",
+  "demos": [
+    {
+      "title": "Paul Archer Design",
+      "desc": "Recreated the Paul Archer Design homepage to demonstrate Tailwind-based layout skills.",
+      "coverImage": "/projects/replica-showcase/paul-archer-design-cover.png",
+      "link": "/en/projects/replica-showcase/demo/paul-archer-design"
+    },
+    {
+      "title": "Preply Teachers",
+      "desc": "Rebuilt the Preply teacher profile page, emphasizing responsive design and UI structure.",
+      "coverImage": "/projects/replica-showcase/preply-cover.png",
+      "link": "/en/projects/replica-showcase/demo/preply"
+    },
+    {
+      "title": "Glints Job Portal",
+      "desc": "Replicated the core user experience of the Glints job platform.",
+      "coverImage": "/projects/replica-showcase/glints-cover.png",
+      "link": "/en/projects/replica-showcase/demo/glints"
+    }
+  ]
+}
