@@ -34,6 +34,7 @@ export default function Header() {
               </Link>
             </li>
           ))}
+
           {/* more page here */}
         </ul>
         <LocaleSwitcher />
