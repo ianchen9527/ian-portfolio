@@ -4,6 +4,7 @@
 import Link from "next/link"
 import LocaleSwitcher from "@/components/LocaleSwitcher"
 import { usePathname } from "next/navigation"
+import getIsDemo from "@/lib/getIsDemo"
 
 export default function Header() {
   const pathname = usePathname()
@@ -16,6 +17,9 @@ export default function Header() {
     { name: "About", link: aboutLink },
     { name: "Projects", link: projectsLink },
   ]
+  const isDemo = getIsDemo(pathname)
+
+  if (isDemo) return <></>
 
   return (
     <header className="border-b border-black/10 py-6">
