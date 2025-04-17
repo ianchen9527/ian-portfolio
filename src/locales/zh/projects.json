@@ -1,0 +1,21 @@
+{
+  "title": "展現所有我能為你做到的",
+  "subtitle": "只要你想得到",
+  "projects": [
+    {
+      "title": "復刻網站",
+      "desc": "復刻現有網站，展現切版能力",
+      "link": "/zh/projects/replica-showcase"
+    },
+    {
+      "title": "設計稿開發",
+      "desc": "將設計稿轉換為可用網頁",
+      "link": "/zh/projects/design-to-code"
+    },
+    {
+      "title": "工具開發",
+      "desc": "將各種互動邏輯實作在網頁上，實現你的奇思妙想",
+      "link": "/zh/projects/tool-development"
+    }
+  ]
+}

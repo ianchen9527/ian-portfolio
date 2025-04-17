@@ -1,0 +1,21 @@
+{
+  "title": "Showcasing everything I can do for you",
+  "subtitle": "As long as you can imagine it",
+  "projects": [
+    {
+      "title": "Website Replication",
+      "desc": "Recreating existing websites to demonstrate layout and styling skills",
+      "link": "/en/projects/replica-showcase"
+    },
+    {
+      "title": "Design to Code",
+      "desc": "Turning Figma or other designs into responsive, production-ready web pages",
+      "link": "/en/projects/design-to-code"
+    },
+    {
+      "title": "Tool Development",
+      "desc": "Implementing complex interactive features to bring your creative ideas to life",
+      "link": "/en/projects/tool-development"
+    }
+  ]
+}
