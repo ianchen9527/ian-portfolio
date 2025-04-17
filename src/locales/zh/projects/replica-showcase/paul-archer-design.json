@@ -1,0 +1,13 @@
+{
+  "title": "Paul Archer Design - 復刻版",
+  "desc": "使用 Tailwind CSS 和 Next.js 技術復刻 Paul Archer Design 首頁。",
+  "coverImage": "/projects/replica-showcase/paul-archer-design/cover.png",
+  "originalLink": "https://paularcherdesign.co.uk/",
+  "skillTitle": "使用技術",
+  "skills": ["Next.js", "Tailwind CSS", "TypeScript", "React"],
+  "originalTitle": "原始網站",
+  "originalDesc": "點此前往 Paul Archer Design 的官方首頁：",
+  "disclaimer": "免責聲明：此專案為個人作品集用途之技術性復刻，僅用於展示，與原網站無任何關聯。",
+  "demoLink": "/zh/projects/replica-showcase/paul-archer-design/demo",
+  "demoButton": "查看 Demo"
+}

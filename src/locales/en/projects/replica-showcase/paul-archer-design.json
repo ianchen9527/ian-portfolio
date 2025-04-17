@@ -1,0 +1,13 @@
+{
+  "title": "Paul Archer Design - Replica",
+  "desc": "A technical recreation of the Paul Archer Design homepage using Tailwind CSS and Next.js.",
+  "coverImage": "/projects/replica-showcase/paul-archer-design/cover.png",
+  "originalLink": "https://paularcherdesign.co.uk/",
+  "skillTitle": "Skills Used",
+  "skills": ["Next.js", "Tailwind CSS", "TypeScript", "React"],
+  "originalTitle": "Original Website",
+  "originalDesc": "Visit the original Paul Archer Design homepage here:",
+  "disclaimer": "Disclaimer: This project is a personal technical replica created for portfolio demonstration purposes only. It is not affiliated with the original creators.",
+  "demoLink": "/zh/projects/replica-showcase/paul-archer-design/demo",
+  "demoButton": "View Demo"
+}
