@@ -11,6 +11,11 @@ export default function Header() {
   const locale = params[0] || "en"
   const homeLink = `/${locale}`
   const aboutLink = `/${locale}/about`
+  const projectsLink = `/${locale}/projects`
+  const navs = [
+    { name: "About", link: aboutLink },
+    { name: "Projects", link: projectsLink },
+  ]
 
   return (
     <header className="border-b border-black/10 py-6 mb-12">
@@ -22,11 +27,13 @@ export default function Header() {
           Ian Chen
         </Link>
         <ul className="flex gap-6 text-xl font-medium">
-          <li>
-            <Link href={aboutLink} className="hover:underline">
-              About
-            </Link>
-          </li>
+          {navs.map((nav) => (
+            <li key={nav.name}>
+              <Link href={nav.link} className="hover:underline">
+                {nav.name}
+              </Link>
+            </li>
+          ))}
           {/* more page here */}
         </ul>
         <LocaleSwitcher />
