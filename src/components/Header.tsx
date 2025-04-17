@@ -18,7 +18,7 @@ export default function Header() {
   ]
 
   return (
-    <header className="border-b border-black/10 py-6 mb-12">
+    <header className="border-b border-black/10 py-6">
       <nav className="max-w-3xl mx-auto px-4 flex justify-between items-center">
         <Link
           href={homeLink}
