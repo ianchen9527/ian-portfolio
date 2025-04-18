@@ -14,7 +14,7 @@ export default async function PaulArcherDesignPage({
 
   const demoButton = () => {
     return (
-      <Link href={t.demoLink}>
+      <Link href={t.demoLink} target="_blank">
         <button className="px-6 py-2 bg-black text-white rounded hover:bg-gray-800 transition cursor-pointer">
           {t.demoButton}
         </button>
