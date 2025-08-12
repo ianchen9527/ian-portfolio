@@ -6,7 +6,7 @@ export class GoogleSheetCsvAdapter implements DataSource {
     const csvUrl: string = this.getCsvUrl(symbol);
     
     try {
-      const response: Response = await fetch(csvUrl);
+      const response: Response = await fetch(csvUrl, { cache: 'no-store' });
       
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -34,61 +34,76 @@ export class GoogleSheetCsvAdapter implements DataSource {
   }
   
   private getCsvUrl(symbol: 'QQQ' | 'SPY'): string {
+    const envVarName: string = `${symbol}_CSV_URL`;
     const url: string | undefined = symbol === 'QQQ' 
       ? process.env.QQQ_CSV_URL 
       : process.env.SPY_CSV_URL;
     
     if (!url) {
-      throw new Error(`Missing environment variable: ${symbol}_CSV_URL`);
+      throw new Error(`Missing environment variable: ${envVarName} for symbol ${symbol}`);
     }
     
     return url;
   }
   
-  private parseCsvToBars(csvText: string): Bar[] {
-    const lines: string[] = csvText.trim().split('\n');
+  protected parseCsvToBars(csvText: string): Bar[] {
+    // Normalize line endings and remove BOM
+    const normalizedText: string = csvText
+      .replace(/^\uFEFF/, '') // Remove UTF-8 BOM
+      .replace(/\r\n?/g, '\n'); // Normalize CRLF/CR to LF
+    
+    const lines: string[] = normalizedText.trim().split('\n');
     
     if (lines.length < 2) {
       throw new Error('CSV must contain at least a header row and one data row');
     }
     
-    const headerLine: string = lines[0];
+    // Parse and validate headers
+    const headerLine: string = lines[0].replace(/^\uFEFF/, ''); // Remove BOM from header if present
     const expectedHeaders: string[] = ['date', 'close', 'sma200'];
     const actualHeaders: string[] = headerLine.split(',').map(h => h.trim().toLowerCase());
     
-    if (!expectedHeaders.every(header => actualHeaders.includes(header))) {
-      throw new Error(`CSV header must contain: ${expectedHeaders.join(', ')}`);
+    const missingHeaders: string[] = expectedHeaders.filter(header => !actualHeaders.includes(header));
+    if (missingHeaders.length > 0) {
+      throw new Error(`CSV header missing required columns: ${missingHeaders.join(', ')}. Actual headers: [${actualHeaders.join(', ')}]`);
     }
     
     const dateIndex: number = actualHeaders.indexOf('date');
     const closeIndex: number = actualHeaders.indexOf('close');
     const sma200Index: number = actualHeaders.indexOf('sma200');
     
-    const bars: Bar[] = [];
+    const dateRegex: RegExp = /^\d{4}-\d{2}-\d{2}$/;
+    const barsMap: Map<string, Bar> = new Map();
     
     for (let i = 1; i < lines.length; i++) {
       const line: string = lines[i].trim();
-      if (!line) continue;
+      if (!line) continue; // Skip empty lines
       
       const columns: string[] = line.split(',').map(col => col.trim());
       
       if (columns.length < Math.max(dateIndex, closeIndex, sma200Index) + 1) {
-        continue;
+        continue; // Skip rows with insufficient columns
       }
       
       const date: string = columns[dateIndex];
       const closeStr: string = columns[closeIndex];
       const sma200Str: string = columns[sma200Index];
       
-      if (!date || !closeStr) {
-        continue;
+      // Validate date format
+      if (!date || !dateRegex.test(date)) {
+        continue; // Skip rows with invalid dates
       }
       
+      // Validate and parse close
+      if (!closeStr) {
+        continue; // Skip rows without close price
+      }
       const close: number = parseFloat(closeStr);
       if (isNaN(close)) {
-        continue;
+        continue; // Skip rows with invalid close price
       }
       
+      // Parse sma200 (empty string or invalid number becomes null)
       let sma200: number | null = null;
       if (sma200Str && sma200Str !== '') {
         const sma200Parsed: number = parseFloat(sma200Str);
@@ -97,14 +112,15 @@ export class GoogleSheetCsvAdapter implements DataSource {
         }
       }
       
-      bars.push({
+      // Handle duplicate dates - keep the last occurrence
+      barsMap.set(date, {
         date,
         close,
         sma200,
       });
     }
     
-    return bars;
+    return Array.from(barsMap.values());
   }
   
   private sortByDateAscending(bars: Bar[]): Bar[] {
