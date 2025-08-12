@@ -58,24 +58,48 @@ export class GoogleSheetCsvAdapter implements DataSource {
       throw new Error('CSV must contain at least a header row and one data row');
     }
     
-    // Parse and validate headers
-    const headerLine: string = lines[0].replace(/^\uFEFF/, ''); // Remove BOM from header if present
+    // Auto-detect header within first N lines (default 10)
+    const maxHeaderScanLines: number = Math.min(10, lines.length);
     const expectedHeaders: string[] = ['date', 'close', 'sma200'];
-    const actualHeaders: string[] = headerLine.split(',').map(h => h.trim().toLowerCase());
     
-    const missingHeaders: string[] = expectedHeaders.filter(header => !actualHeaders.includes(header));
-    if (missingHeaders.length > 0) {
-      throw new Error(`CSV header missing required columns: ${missingHeaders.join(', ')}. Actual headers: [${actualHeaders.join(', ')}]`);
+    let headerLineIndex: number = -1;
+    let actualHeaders: string[] = [];
+    const headerCandidates: string[][] = [];
+    
+    for (let i = 0; i < maxHeaderScanLines; i++) {
+      const line: string = lines[i].replace(/^\uFEFF/, ''); // Remove BOM if present
+      const candidateHeaders: string[] = line.split(',').map(h => h.trim().toLowerCase());
+      headerCandidates.push(candidateHeaders);
+      
+      // Check if this line contains all required headers
+      const hasAllHeaders: boolean = expectedHeaders.every(header => candidateHeaders.includes(header));
+      if (hasAllHeaders) {
+        headerLineIndex = i;
+        actualHeaders = candidateHeaders;
+        break;
+      }
+    }
+    
+    // If header not found, provide detailed error
+    if (headerLineIndex === -1) {
+      const candidatesList: string = headerCandidates
+        .map((headers, idx) => `Line ${idx + 1}: [${headers.join(', ')}]`)
+        .join('\n  ');
+      throw new Error(`Could not find header with required columns (${expectedHeaders.join(', ')}) within first ${maxHeaderScanLines} lines.\nInspected:\n  ${candidatesList}`);
     }
     
     const dateIndex: number = actualHeaders.indexOf('date');
     const closeIndex: number = actualHeaders.indexOf('close');
     const sma200Index: number = actualHeaders.indexOf('sma200');
     
-    const dateRegex: RegExp = /^\d{4}-\d{2}-\d{2}$/;
+    // Date regex patterns - accept both YYYY-MM-DD and YYYY/MM/DD
+    const dashDateRegex: RegExp = /^\d{4}-\d{2}-\d{2}$/;
+    const slashDateRegex: RegExp = /^\d{4}\/\d{2}\/\d{2}$/;
     const barsMap: Map<string, Bar> = new Map();
     
-    for (let i = 1; i < lines.length; i++) {
+    const dataStartIndex: number = headerLineIndex + 1;
+    
+    for (let i = dataStartIndex; i < lines.length; i++) {
       const line: string = lines[i].trim();
       if (!line) continue; // Skip empty lines
       
@@ -85,13 +109,22 @@ export class GoogleSheetCsvAdapter implements DataSource {
         continue; // Skip rows with insufficient columns
       }
       
-      const date: string = columns[dateIndex];
+      const rawDate: string = columns[dateIndex];
       const closeStr: string = columns[closeIndex];
       const sma200Str: string = columns[sma200Index];
       
-      // Validate date format
-      if (!date || !dateRegex.test(date)) {
-        continue; // Skip rows with invalid dates
+      // Validate and normalize date format
+      if (!rawDate) {
+        continue; // Skip rows without date
+      }
+      
+      let normalizedDate: string = rawDate;
+      if (slashDateRegex.test(rawDate)) {
+        // Convert YYYY/MM/DD to YYYY-MM-DD
+        normalizedDate = rawDate.replace(/\//g, '-');
+      } else if (!dashDateRegex.test(rawDate)) {
+        // Skip rows with invalid date format
+        continue;
       }
       
       // Validate and parse close
@@ -113,8 +146,8 @@ export class GoogleSheetCsvAdapter implements DataSource {
       }
       
       // Handle duplicate dates - keep the last occurrence
-      barsMap.set(date, {
-        date,
+      barsMap.set(normalizedDate, {
+        date: normalizedDate,
         close,
         sma200,
       });
