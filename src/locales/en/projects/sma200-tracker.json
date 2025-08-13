@@ -1,0 +1,51 @@
+{
+  "metadata": {
+    "title": "SMA200 Tracker (QQQ & SPY)",
+    "description": "Track QQQ and SPY market signals based on 200-day Simple Moving Average crossovers with risk-on/risk-off analysis."
+  },
+  "page": {
+    "title": "SMA200 Tracker"
+  },
+  "error": {
+    "dataUnavailable": "Data Unavailable",
+    "noDataAvailable": "No data available",
+    "checkCsvUrl": "Please check CSV URL configuration for {symbol}",
+    "insufficientData": "Insufficient data: only {count} rows available (minimum 5 required)",
+    "unknownError": "Unknown error occurred"
+  },
+  "signalSummary": {
+    "states": {
+      "riskOn": "Risk On",
+      "riskOff": "Risk Off",
+      "unknown": "Unknown"
+    },
+    "fields": {
+      "close": "Close",
+      "sma200": "SMA200",
+      "lastSwitch": "Last Switch",
+      "holdingDays": "Holding Days",
+      "lastUpdated": "Last updated: {date}"
+    }
+  },
+  "table": {
+    "title": "{symbol} Historical Data",
+    "historicalData": "Historical Data",
+    "rowCount": "{filtered} of {total} rows",
+    "searchPlaceholder": "Search by date (e.g., 2023-01)",
+    "searchLabel": "Search by date",
+    "showSwitchesOnly": "Show switches only",
+    "headers": {
+      "date": "Date",
+      "close": "Close",
+      "sma200": "SMA200",
+      "state": "State",
+      "action": "Action"
+    },
+    "noData": "No data found",
+    "noDataSearch": "No data found for the given search criteria",
+    "noDataSwitches": "No data found - no signal switches in this dataset",
+    "footerCount": "Showing {count} row",
+    "footerCountPlural": "Showing {count} rows",
+    "footerTotal": "Showing {filtered} rows of {total} total"
+  }
+}

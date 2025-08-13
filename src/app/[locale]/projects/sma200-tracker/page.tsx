@@ -9,14 +9,24 @@ import type { SmaPoint, SeriesPayload } from '@/lib/sma200-tracker';
 import type { ReactElement } from 'react';
 import { SignalSummary } from '@/components/sma200-tracker/SignalSummary';
 import { Table } from '@/components/sma200-tracker/Table';
+import { getTranslations } from '@/lib/getTranslations';
 
 // Revalidate every 12 hours (43200 seconds)
 export const revalidate = 43200;
 
-export const metadata: Metadata = {
-  title: 'SMA200 Tracker (QQQ & SPY)',
-  description: 'Track QQQ and SPY market signals based on 200-day Simple Moving Average crossovers with risk-on/risk-off analysis.',
-};
+// Helper function to interpolate strings with placeholders
+function interpolate(template: string, values: Record<string, string | number>): string {
+  return template.replace(/\{(\w+)\}/g, (match, key) => String(values[key] || match));
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const t = await getTranslations(params, "projects/sma200-tracker");
+  
+  return {
+    title: t.metadata.title,
+    description: t.metadata.description,
+  };
+}
 
 interface PageProps {
   params: Promise<{
@@ -34,7 +44,18 @@ interface SymbolData {
   error?: string;
 }
 
-async function fetchSymbolData(adapter: GoogleSheetCsvAdapter, symbol: 'QQQ' | 'SPY'): Promise<SymbolData> {
+interface SMA200TrackerTranslations {
+  error: {
+    insufficientData: string;
+    unknownError: string;
+    dataUnavailable: string;
+    checkCsvUrl: string;
+    noDataAvailable: string;
+  };
+  [key: string]: unknown;
+}
+
+async function fetchSymbolData(adapter: GoogleSheetCsvAdapter, symbol: 'QQQ' | 'SPY', t: SMA200TrackerTranslations): Promise<SymbolData> {
   try {
     const seriesData: SeriesPayload = await adapter.fetchDailySeries(symbol);
     
@@ -46,7 +67,7 @@ async function fetchSymbolData(adapter: GoogleSheetCsvAdapter, symbol: 'QQQ' | '
         lastSwitchDate: null,
         holdingDays: 0,
         lastUpdated: new Date().toISOString().split('T')[0],
-        error: `Insufficient data: only ${seriesData.rows.length} rows available (minimum 5 required)`,
+        error: interpolate(t.error.insufficientData, { count: seriesData.rows.length }),
       };
     }
 
@@ -64,7 +85,7 @@ async function fetchSymbolData(adapter: GoogleSheetCsvAdapter, symbol: 'QQQ' | '
       lastUpdated: latestPoint.date,
     };
   } catch (error) {
-    const errorMessage: string = error instanceof Error ? error.message : 'Unknown error occurred';
+    const errorMessage: string = error instanceof Error ? error.message : t.error.unknownError;
     return {
       symbol,
       signals: [],
@@ -77,15 +98,15 @@ async function fetchSymbolData(adapter: GoogleSheetCsvAdapter, symbol: 'QQQ' | '
   }
 }
 
-function ErrorCard({ symbol, error }: { symbol: string; error: string }): ReactElement {
+function ErrorCard({ symbol, error, t }: { symbol: string; error: string; t: SMA200TrackerTranslations }): ReactElement {
   return (
     <div className="border border-red-200 rounded-lg p-4 bg-red-50">
       <h2 className="text-lg font-semibold text-red-800 mb-2">{symbol}</h2>
       <div className="text-red-700">
-        <p className="font-medium">Data Unavailable</p>
+        <p className="font-medium">{t.error.dataUnavailable}</p>
         <p className="text-sm mt-1">{error}</p>
         <p className="text-xs mt-2 text-red-600">
-          Please check CSV URL configuration for {symbol}
+          {interpolate(t.error.checkCsvUrl, { symbol })}
         </p>
       </div>
     </div>
@@ -93,27 +114,24 @@ function ErrorCard({ symbol, error }: { symbol: string; error: string }): ReactE
 }
 
 export default async function SMA200TrackerPage({ params }: PageProps): Promise<ReactElement> {
-  // Read locale parameter to maintain signature alignment (i18n will be added later)
-  const resolvedParams = await params;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const _locale: string = resolvedParams.locale;
+  const t = await getTranslations(params, "projects/sma200-tracker");
   
   const adapter = new GoogleSheetCsvAdapter();
   
   // Fetch data for both symbols in parallel
   const [qqqData, spyData] = await Promise.all([
-    fetchSymbolData(adapter, 'QQQ'),
-    fetchSymbolData(adapter, 'SPY'),
+    fetchSymbolData(adapter, 'QQQ', t),
+    fetchSymbolData(adapter, 'SPY', t),
   ]);
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-8">
-      <h1 className="text-3xl font-bold text-gray-900">SMA200 Tracker</h1>
+      <h1 className="text-3xl font-bold text-gray-900">{t.page.title}</h1>
       
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {qqqData.error ? (
-          <ErrorCard symbol={qqqData.symbol} error={qqqData.error} />
+          <ErrorCard symbol={qqqData.symbol} error={qqqData.error} t={t} />
         ) : qqqData.latestPoint ? (
           <SignalSummary
             symbol={qqqData.symbol}
@@ -123,13 +141,14 @@ export default async function SMA200TrackerPage({ params }: PageProps): Promise<
             lastSwitchDate={qqqData.lastSwitchDate}
             holdingDays={qqqData.holdingDays}
             lastUpdated={qqqData.lastUpdated}
+            t={t}
           />
         ) : (
-          <ErrorCard symbol={qqqData.symbol} error="No data available" />
+          <ErrorCard symbol={qqqData.symbol} error={t.error.noDataAvailable} t={t} />
         )}
         
         {spyData.error ? (
-          <ErrorCard symbol={spyData.symbol} error={spyData.error} />
+          <ErrorCard symbol={spyData.symbol} error={spyData.error} t={t} />
         ) : spyData.latestPoint ? (
           <SignalSummary
             symbol={spyData.symbol}
@@ -139,19 +158,20 @@ export default async function SMA200TrackerPage({ params }: PageProps): Promise<
             lastSwitchDate={spyData.lastSwitchDate}
             holdingDays={spyData.holdingDays}
             lastUpdated={spyData.lastUpdated}
+            t={t}
           />
         ) : (
-          <ErrorCard symbol={spyData.symbol} error="No data available" />
+          <ErrorCard symbol={spyData.symbol} error={t.error.noDataAvailable} t={t} />
         )}
       </div>
       
       {/* Tables */}
       <div className="space-y-8">
         {!qqqData.error && qqqData.signals.length > 0 && (
-          <Table rows={qqqData.signals} symbol="QQQ" />
+          <Table rows={qqqData.signals} symbol="QQQ" t={t} />
         )}
         {!spyData.error && spyData.signals.length > 0 && (
-          <Table rows={spyData.signals} symbol="SPY" />
+          <Table rows={spyData.signals} symbol="SPY" t={t} />
         )}
       </div>
     </div>

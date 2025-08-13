@@ -1,0 +1,51 @@
+{
+  "metadata": {
+    "title": "SMA200 追蹤器 (QQQ & SPY)",
+    "description": "基於200日簡單移動平均線交叉追蹤QQQ和SPY市場信號，提供風險開關分析。"
+  },
+  "page": {
+    "title": "SMA200 追蹤器"
+  },
+  "error": {
+    "dataUnavailable": "資料無法取得",
+    "noDataAvailable": "無可用資料",
+    "checkCsvUrl": "請檢查 {symbol} 的 CSV URL 設定",
+    "insufficientData": "資料不足：僅有 {count} 筆資料（最少需要 5 筆）",
+    "unknownError": "發生未知錯誤"
+  },
+  "signalSummary": {
+    "states": {
+      "riskOn": "持有",
+      "riskOff": "拋售",
+      "unknown": "未知"
+    },
+    "fields": {
+      "close": "收盤價",
+      "sma200": "SMA200",
+      "lastSwitch": "最後切換",
+      "holdingDays": "持有天數",
+      "lastUpdated": "最後更新：{date}"
+    }
+  },
+  "table": {
+    "title": "{symbol} 歷史資料",
+    "historicalData": "歷史資料",
+    "rowCount": "{filtered} 筆，共 {total} 筆",
+    "searchPlaceholder": "依日期搜尋（例如：2023-01）",
+    "searchLabel": "依日期搜尋",
+    "showSwitchesOnly": "僅顯示切換點",
+    "headers": {
+      "date": "日期",
+      "close": "收盤價",
+      "sma200": "SMA200",
+      "state": "狀態",
+      "action": "動作"
+    },
+    "noData": "未找到資料",
+    "noDataSearch": "未找到符合搜尋條件的資料",
+    "noDataSwitches": "未找到資料 - 此資料集中無信號切換",
+    "footerCount": "顯示 {count} 筆",
+    "footerCountPlural": "顯示 {count} 筆",
+    "footerTotal": "顯示 {filtered} 筆，共 {total} 筆"
+  }
+}

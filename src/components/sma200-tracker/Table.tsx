@@ -4,9 +4,41 @@ import { useState, useMemo, useCallback } from 'react';
 import type { ReactElement, ChangeEvent } from 'react';
 import type { SmaPoint } from '@/lib/sma200-tracker';
 
+interface TableTranslations {
+  table: {
+    title: string;
+    historicalData: string;
+    rowCount: string;
+    searchLabel: string;
+    searchPlaceholder: string;
+    showSwitchesOnly: string;
+    headers: {
+      date: string;
+      close: string;
+      sma200: string;
+      state: string;
+      action: string;
+    };
+    noData: string;
+    noDataSearch: string;
+    noDataSwitches: string;
+    footerTotal: string;
+    footerCount: string;
+    footerCountPlural: string;
+  };
+  signalSummary: {
+    states: {
+      riskOn: string;
+      riskOff: string;
+      unknown: string;
+    };
+  };
+}
+
 export interface TableProps {
   rows: SmaPoint[];
   symbol?: string; // Optional symbol for display
+  t: TableTranslations;
 }
 
 function formatCurrency(value: number | null): string {
@@ -14,14 +46,14 @@ function formatCurrency(value: number | null): string {
   return `$${value.toFixed(2)}`;
 }
 
-function formatState(state: string): string {
+function formatState(state: string, t: TableTranslations): string {
   switch (state) {
     case 'RISK_ON':
-      return 'Risk On';
+      return t.signalSummary.states.riskOn;
     case 'RISK_OFF':
-      return 'Risk Off';
+      return t.signalSummary.states.riskOff;
     case 'UNKNOWN':
-      return 'Unknown';
+      return t.signalSummary.states.unknown;
     default:
       return state;
   }
@@ -31,7 +63,11 @@ function formatAction(action: string): string {
   return action.charAt(0) + action.slice(1).toLowerCase();
 }
 
-export function Table({ rows, symbol }: TableProps): ReactElement {
+function interpolate(template: string, values: Record<string, string | number>): string {
+  return template.replace(/\{(\w+)\}/g, (match, key) => String(values[key] || match));
+}
+
+export function Table({ rows, symbol, t }: TableProps): ReactElement {
   const [showSwitchesOnly, setShowSwitchesOnly] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
 
@@ -71,10 +107,10 @@ export function Table({ rows, symbol }: TableProps): ReactElement {
       <div className="p-4 border-b border-gray-100">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900">
-            {symbol ? `${symbol} ` : ''}Historical Data
+            {symbol ? interpolate(t.table.title, { symbol }) : t.table.historicalData}
           </h3>
           <div className="text-sm text-gray-500">
-            {filteredRows.length} of {rows.length} rows
+            {interpolate(t.table.rowCount, { filtered: filteredRows.length, total: rows.length })}
           </div>
         </div>
         
@@ -82,12 +118,12 @@ export function Table({ rows, symbol }: TableProps): ReactElement {
           {/* Search input */}
           <div className="flex-1">
             <label htmlFor="date-search" className="sr-only">
-              Search by date
+              {t.table.searchLabel}
             </label>
             <input
               id="date-search"
               type="text"
-              placeholder="Search by date (e.g., 2023-01)"
+              placeholder={t.table.searchPlaceholder}
               value={searchTerm}
               onChange={handleSearchChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -103,7 +139,7 @@ export function Table({ rows, symbol }: TableProps): ReactElement {
                 onChange={handleSwitchToggle}
                 className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-2"
               />
-              Show switches only
+              {t.table.showSwitchesOnly}
             </label>
           </div>
         </div>
@@ -118,31 +154,31 @@ export function Table({ rows, symbol }: TableProps): ReactElement {
                 scope="col" 
                 className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Date
+                {t.table.headers.date}
               </th>
               <th 
                 scope="col" 
                 className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Close
+                {t.table.headers.close}
               </th>
               <th 
                 scope="col" 
                 className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                SMA200
+                {t.table.headers.sma200}
               </th>
               <th 
                 scope="col" 
                 className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                State
+                {t.table.headers.state}
               </th>
               <th 
                 scope="col" 
                 className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Action
+                {t.table.headers.action}
               </th>
             </tr>
           </thead>
@@ -150,9 +186,12 @@ export function Table({ rows, symbol }: TableProps): ReactElement {
             {filteredRows.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
-                  No data found
-                  {searchTerm && ' for the given search criteria'}
-                  {showSwitchesOnly && !searchTerm && ' - no signal switches in this dataset'}
+                  {searchTerm 
+                    ? t.table.noDataSearch
+                    : showSwitchesOnly 
+                    ? t.table.noDataSwitches
+                    : t.table.noData
+                  }
                 </td>
               </tr>
             ) : (
@@ -184,7 +223,7 @@ export function Table({ rows, symbol }: TableProps): ReactElement {
                           ? 'bg-gray-50 text-gray-700'
                           : 'bg-gray-50 text-gray-600'
                       }`}>
-                        {formatState(row.state)}
+                        {formatState(row.state, t)}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-center">
@@ -209,8 +248,10 @@ export function Table({ rows, symbol }: TableProps): ReactElement {
       {/* Footer with row count */}
       {filteredRows.length > 0 && (
         <div className="px-4 py-3 border-t border-gray-100 text-xs text-gray-500">
-          Showing {filteredRows.length} row{filteredRows.length !== 1 ? 's' : ''}
-          {filteredRows.length !== rows.length && ` of ${rows.length} total`}
+          {filteredRows.length !== rows.length 
+            ? interpolate(t.table.footerTotal, { filtered: filteredRows.length, total: rows.length })
+            : interpolate(filteredRows.length === 1 ? t.table.footerCount : t.table.footerCountPlural, { count: filteredRows.length })
+          }
         </div>
       )}
     </div>

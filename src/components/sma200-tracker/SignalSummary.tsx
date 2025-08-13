@@ -1,5 +1,22 @@
 import type { ReactElement } from 'react';
 
+interface SignalSummaryTranslations {
+  signalSummary: {
+    states: {
+      riskOn: string;
+      riskOff: string;
+      unknown: string;
+    };
+    fields: {
+      close: string;
+      sma200: string;
+      lastSwitch: string;
+      holdingDays: string;
+      lastUpdated: string;
+    };
+  };
+}
+
 export interface SignalSummaryProps {
   symbol: 'QQQ' | 'SPY';
   latestClose: number;
@@ -8,6 +25,7 @@ export interface SignalSummaryProps {
   lastSwitchDate: string | null;
   holdingDays: number | null;
   lastUpdated: string | null;
+  t: SignalSummaryTranslations;
 }
 
 function formatCurrency(value: number | null): string {
@@ -15,17 +33,21 @@ function formatCurrency(value: number | null): string {
   return `$${value.toFixed(2)}`;
 }
 
-function formatState(state: string): string {
+function formatState(state: string, t: SignalSummaryTranslations): string {
   switch (state) {
     case 'RISK_ON':
-      return 'Risk On';
+      return t.signalSummary.states.riskOn;
     case 'RISK_OFF':
-      return 'Risk Off';
+      return t.signalSummary.states.riskOff;
     case 'UNKNOWN':
-      return 'Unknown';
+      return t.signalSummary.states.unknown;
     default:
       return state;
   }
+}
+
+function interpolate(template: string, values: Record<string, string | number>): string {
+  return template.replace(/\{(\w+)\}/g, (match, key) => String(values[key] || match));
 }
 
 export function SignalSummary({
@@ -36,6 +58,7 @@ export function SignalSummary({
   lastSwitchDate,
   holdingDays,
   lastUpdated,
+  t,
 }: SignalSummaryProps): ReactElement {
   const stateColor: string = state === 'RISK_ON' 
     ? 'text-gray-800 bg-gray-100 border-gray-300' 
@@ -48,7 +71,7 @@ export function SignalSummary({
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-lg font-semibold text-gray-900">{symbol}</h3>
         <div className={`px-3 py-1 rounded-full text-sm font-medium border ${stateColor}`}>
-          {formatState(state)}
+          {formatState(state, t)}
         </div>
       </div>
       
@@ -56,11 +79,11 @@ export function SignalSummary({
         {/* Price Information */}
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <div className="text-gray-500 text-xs uppercase tracking-wide">Close</div>
+            <div className="text-gray-500 text-xs uppercase tracking-wide">{t.signalSummary.fields.close}</div>
             <div className="font-mono text-lg text-gray-900">{formatCurrency(latestClose)}</div>
           </div>
           <div>
-            <div className="text-gray-500 text-xs uppercase tracking-wide">SMA200</div>
+            <div className="text-gray-500 text-xs uppercase tracking-wide">{t.signalSummary.fields.sma200}</div>
             <div className="font-mono text-lg text-gray-700">{formatCurrency(latestSma200)}</div>
           </div>
         </div>
@@ -71,11 +94,11 @@ export function SignalSummary({
         {/* Signal Information */}
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <div className="text-gray-500 text-xs uppercase tracking-wide">Last Switch</div>
+            <div className="text-gray-500 text-xs uppercase tracking-wide">{t.signalSummary.fields.lastSwitch}</div>
             <div className="font-mono text-gray-700">{lastSwitchDate || '-'}</div>
           </div>
           <div>
-            <div className="text-gray-500 text-xs uppercase tracking-wide">Holding Days</div>
+            <div className="text-gray-500 text-xs uppercase tracking-wide">{t.signalSummary.fields.holdingDays}</div>
             <div className="font-mono text-gray-700">{holdingDays !== null ? holdingDays : '-'}</div>
           </div>
         </div>
@@ -83,7 +106,7 @@ export function SignalSummary({
         {/* Last Updated */}
         <div className="pt-2 border-t border-gray-100">
           <div className="text-xs text-gray-400">
-            Last updated: {lastUpdated || '-'}
+            {interpolate(t.signalSummary.fields.lastUpdated, { date: lastUpdated || '-' })}
           </div>
         </div>
       </div>
