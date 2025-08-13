@@ -14,9 +14,9 @@
       "link": ""
     },
     {
-      "title": "Stock Profit Tracker",
-      "desc": "Auto-calculates daily profit/loss by integrating real-time stock prices (in progress).",
-      "link": ""
+      "title": "SMA200 Tracker (QQQ & SPY)",
+      "desc": "A tracker for QQQ and SPY market signals based on 200-day simple moving average crossovers, providing risk switch analysis.",
+      "link": "/en/projects/sma200-tracker"
     }
   ]
 }

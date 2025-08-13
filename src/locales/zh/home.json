@@ -14,9 +14,9 @@
       "link": ""
     },
     {
-      "title": "股票記帳工具",
-      "desc": "自動計算每日損益，串接即時股價 API（開發中）",
-      "link": ""
+      "title": "SMA200 追蹤器 (QQQ & SPY)",
+      "desc": "基於200日簡單移動平均線交叉追蹤QQQ和SPY市場信號，提供風險開關分析。",
+      "link": "/zh/projects/sma200-tracker"
     }
   ]
 }
