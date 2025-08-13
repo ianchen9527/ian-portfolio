@@ -7,6 +7,8 @@ import {
 } from '@/lib/sma200-tracker';
 import type { SmaPoint, SeriesPayload } from '@/lib/sma200-tracker';
 import type { ReactElement } from 'react';
+import { SignalSummary } from '@/components/sma200-tracker/SignalSummary';
+import { Table } from '@/components/sma200-tracker/Table';
 
 // Revalidate every 12 hours (43200 seconds)
 export const revalidate = 43200;
@@ -22,8 +24,9 @@ interface PageProps {
   }>;
 }
 
-interface SymbolSummary {
+interface SymbolData {
   symbol: 'QQQ' | 'SPY';
+  signals: SmaPoint[];
   latestPoint: SmaPoint | null;
   lastSwitchDate: string | null;
   holdingDays: number;
@@ -31,13 +34,14 @@ interface SymbolSummary {
   error?: string;
 }
 
-async function fetchSymbolData(adapter: GoogleSheetCsvAdapter, symbol: 'QQQ' | 'SPY'): Promise<SymbolSummary> {
+async function fetchSymbolData(adapter: GoogleSheetCsvAdapter, symbol: 'QQQ' | 'SPY'): Promise<SymbolData> {
   try {
     const seriesData: SeriesPayload = await adapter.fetchDailySeries(symbol);
     
     if (seriesData.rows.length < 5) {
       return {
         symbol,
+        signals: [],
         latestPoint: null,
         lastSwitchDate: null,
         holdingDays: 0,
@@ -53,6 +57,7 @@ async function fetchSymbolData(adapter: GoogleSheetCsvAdapter, symbol: 'QQQ' | '
     
     return {
       symbol,
+      signals,
       latestPoint,
       lastSwitchDate,
       holdingDays,
@@ -62,6 +67,7 @@ async function fetchSymbolData(adapter: GoogleSheetCsvAdapter, symbol: 'QQQ' | '
     const errorMessage: string = error instanceof Error ? error.message : 'Unknown error occurred';
     return {
       symbol,
+      signals: [],
       latestPoint: null,
       lastSwitchDate: null,
       holdingDays: 0,
@@ -71,95 +77,16 @@ async function fetchSymbolData(adapter: GoogleSheetCsvAdapter, symbol: 'QQQ' | '
   }
 }
 
-function formatCurrency(value: number | null): string {
-  if (value === null) return 'N/A';
-  return `$${value.toFixed(2)}`;
-}
-
-function formatState(state: string): string {
-  switch (state) {
-    case 'RISK_ON':
-      return 'Risk On';
-    case 'RISK_OFF':
-      return 'Risk Off';
-    case 'UNKNOWN':
-      return 'Unknown';
-    default:
-      return state;
-  }
-}
-
-interface SummaryCardProps {
-  summary: SymbolSummary;
-}
-
-function SummaryCard({ summary }: SummaryCardProps): ReactElement {
-  if (summary.error) {
-    return (
-      <div className="border rounded p-4 bg-red-50">
-        <h2 className="text-lg font-semibold text-red-800 mb-2">{summary.symbol}</h2>
-        <div className="text-red-700">
-          <p className="font-medium">Data Unavailable</p>
-          <p className="text-sm mt-1">{summary.error}</p>
-          <p className="text-xs mt-2 text-red-600">
-            Please check CSV URL configuration for {summary.symbol}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  const { latestPoint, lastSwitchDate, holdingDays, lastUpdated } = summary;
-  
-  if (!latestPoint) {
-    return (
-      <div className="border rounded p-4 bg-gray-50">
-        <h2 className="text-lg font-semibold text-gray-800 mb-2">{summary.symbol}</h2>
-        <p className="text-gray-600">No data available</p>
-      </div>
-    );
-  }
-
-  const stateColor: string = latestPoint.state === 'RISK_ON' 
-    ? 'text-green-700 bg-green-50' 
-    : latestPoint.state === 'RISK_OFF' 
-    ? 'text-red-700 bg-red-50' 
-    : 'text-gray-700 bg-gray-50';
-
+function ErrorCard({ symbol, error }: { symbol: string; error: string }): ReactElement {
   return (
-    <div className="border rounded p-4">
-      <h2 className="text-lg font-semibold mb-3">{summary.symbol}</h2>
-      
-      <div className="space-y-2">
-        <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${stateColor}`}>
-          {formatState(latestPoint.state)}
-        </div>
-        
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div>
-            <span className="text-gray-600">Latest Close:</span>
-            <div className="font-medium">{formatCurrency(latestPoint.close)}</div>
-          </div>
-          
-          <div>
-            <span className="text-gray-600">SMA200:</span>
-            <div className="font-medium">{formatCurrency(latestPoint.sma200)}</div>
-          </div>
-          
-          <div>
-            <span className="text-gray-600">Last Switch:</span>
-            <div className="font-medium">{lastSwitchDate || 'None'}</div>
-          </div>
-          
-          <div>
-            <span className="text-gray-600">Holding Days:</span>
-            <div className="font-medium">{holdingDays}</div>
-          </div>
-        </div>
-        
-        <div className="text-xs text-gray-500 mt-3">
-          Last updated: {lastUpdated}
-        </div>
+    <div className="border border-red-200 rounded-lg p-4 bg-red-50">
+      <h2 className="text-lg font-semibold text-red-800 mb-2">{symbol}</h2>
+      <div className="text-red-700">
+        <p className="font-medium">Data Unavailable</p>
+        <p className="text-sm mt-1">{error}</p>
+        <p className="text-xs mt-2 text-red-600">
+          Please check CSV URL configuration for {symbol}
+        </p>
       </div>
     </div>
   );
@@ -174,31 +101,58 @@ export default async function SMA200TrackerPage({ params }: PageProps): Promise<
   const adapter = new GoogleSheetCsvAdapter();
   
   // Fetch data for both symbols in parallel
-  const [qqqSummary, spySummary] = await Promise.all([
+  const [qqqData, spyData] = await Promise.all([
     fetchSymbolData(adapter, 'QQQ'),
     fetchSymbolData(adapter, 'SPY'),
   ]);
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">SMA200 Tracker (QQQ & SPY)</h1>
+    <div className="max-w-6xl mx-auto p-6 space-y-8">
+      <h1 className="text-3xl font-bold text-gray-900">SMA200 Tracker</h1>
       
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <SummaryCard summary={qqqSummary} />
-        <SummaryCard summary={spySummary} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {qqqData.error ? (
+          <ErrorCard symbol={qqqData.symbol} error={qqqData.error} />
+        ) : qqqData.latestPoint ? (
+          <SignalSummary
+            symbol={qqqData.symbol}
+            latestClose={qqqData.latestPoint.close}
+            latestSma200={qqqData.latestPoint.sma200}
+            state={qqqData.latestPoint.state}
+            lastSwitchDate={qqqData.lastSwitchDate}
+            holdingDays={qqqData.holdingDays}
+            lastUpdated={qqqData.lastUpdated}
+          />
+        ) : (
+          <ErrorCard symbol={qqqData.symbol} error="No data available" />
+        )}
+        
+        {spyData.error ? (
+          <ErrorCard symbol={spyData.symbol} error={spyData.error} />
+        ) : spyData.latestPoint ? (
+          <SignalSummary
+            symbol={spyData.symbol}
+            latestClose={spyData.latestPoint.close}
+            latestSma200={spyData.latestPoint.sma200}
+            state={spyData.latestPoint.state}
+            lastSwitchDate={spyData.lastSwitchDate}
+            holdingDays={spyData.holdingDays}
+            lastUpdated={spyData.lastUpdated}
+          />
+        ) : (
+          <ErrorCard symbol={spyData.symbol} error="No data available" />
+        )}
       </div>
       
-      {/* Chart Placeholder */}
-      <div className="border rounded p-8 mb-6 text-center bg-gray-50">
-        <h2 className="text-lg font-medium text-gray-700 mb-2">Chart Placeholder</h2>
-        <p className="text-gray-500">Interactive price charts with SMA200 overlay will be added in Step 5</p>
-      </div>
-      
-      {/* Table Placeholder */}
-      <div className="border rounded p-8 text-center bg-gray-50">
-        <h2 className="text-lg font-medium text-gray-700 mb-2">Table Placeholder</h2>
-        <p className="text-gray-500">Historical data table with signals will be added in Step 5</p>
+      {/* Tables */}
+      <div className="space-y-8">
+        {!qqqData.error && qqqData.signals.length > 0 && (
+          <Table rows={qqqData.signals} symbol="QQQ" />
+        )}
+        {!spyData.error && spyData.signals.length > 0 && (
+          <Table rows={spyData.signals} symbol="SPY" />
+        )}
       </div>
     </div>
   );
